@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CursolImages } from '../../Models/cursol-images';
 
 @Component({
@@ -12,25 +12,27 @@ export class Cursol {
   currentIndex = 0;
   intervalId: any = null;
 
-  nextImage() {
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  nextImage(): void {
     this.currentIndex = (this.currentIndex + 1) % this.images.length;
+    this.cdr.detectChanges(); // force UI update
   }
 
-  prevImage() {
+  prevImage(): void {
     this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+    this.cdr.detectChanges(); // force UI update
   }
 
-  playCarousel() {
+  playCarousel(): void {
     if (!this.intervalId) {
       this.intervalId = setInterval(() => {
-        console.log(this.currentIndex)
-        // document.getElementById("next")?.click()
         this.nextImage();
-      }, 500); // change every 0.5 seconds
+      }, 1000); // 1 second
     }
   }
 
-  stopCarousel() {
+  stopCarousel(): void {
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
