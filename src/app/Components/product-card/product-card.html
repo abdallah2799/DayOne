@@ -1,0 +1,13 @@
+<div class="card h-100" appHoverCard>
+  <img [src]="product.images[0]" class="card-img-top" alt="{{ product.title }}">
+  <div class="card-body">
+    <h5 class="card-title">{{ product.title }}</h5>
+    <p class="card-text" (click)="toggleDescription()" style="cursor: pointer;">
+      {{ product.description | shortenDescription:isExpanded }}
+    </p>
+    <p class="card-text fw-bold text-success">
+      Price: {{ product.price }}$
+    </p>
+    <button class="btn btn-primary" (click)="handleBuy()">Buy</button>
+  </div>
+</div>

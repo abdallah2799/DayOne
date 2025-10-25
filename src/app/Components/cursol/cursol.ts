@@ -16,12 +16,12 @@ export class Cursol {
 
   nextImage(): void {
     this.currentIndex = (this.currentIndex + 1) % this.images.length;
-    this.cdr.detectChanges(); // force UI update
+    //this.cdr.detectChanges(); // force UI update
   }
 
   prevImage(): void {
     this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
-    this.cdr.detectChanges(); // force UI update
+    //this.cdr.detectChanges(); // force UI update
   }
 
   playCarousel(): void {
