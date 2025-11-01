@@ -1,0 +1,207 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2>Admin Dashboard</h2>
+          <p class="text-muted mb-0">Welcome back, {{ currentUser?.firstName }}!</p>
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="card text-white bg-primary shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Total Users</h5>
+              <h2 class="mb-0">{{ users.length }}</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-white bg-success shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Total Products</h5>
+              <h2 class="mb-0">{{ products.length }}</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-white bg-info shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Admins</h5>
+              <h2 class="mb-0">{{ getAdminCount() }}</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button 
+            class="nav-link" 
+            [class.active]="activeTab === 'products'"
+            (click)="setActiveTab('products')"
+            type="button">
+            Products Management
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button 
+            class="nav-link" 
+            [class.active]="activeTab === 'users'"
+            (click)="setActiveTab('users')"
+            type="button">
+            Users Management
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Products Tab -->
+        <div *ngIf="activeTab === 'products'">
+          <div class="card shadow-sm">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Products</h5>
+              <a routerLink="/add-product" class="btn btn-light btn-sm">
+                <i class="bi bi-plus-circle"></i> Add New Product
+              </a>
+            </div>
+            <div class="card-body">
+              <div *ngIf="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+
+              <div *ngIf="!loading && products.length === 0" class="alert alert-info">
+                No products available. Add your first product!
+              </div>
+
+              <div *ngIf="!loading && products.length > 0" class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Image</th>
+                      <th>Title</th>
+                      <th>Brand</th>
+                      <th>Category</th>
+                      <th>Price</th>
+                      <th>Stock</th>
+                      <th>Rating</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let product of products">
+                      <td>{{ product.id }}</td>
+                      <td><img [src]="product.thumbnail" alt="{{ product.title }}" class="product-thumb"></td>
+                      <td>{{ product.title }}</td>
+                      <td><span class="badge bg-secondary">{{ product.brand }}</span></td>
+                      <td><span class="badge bg-info">{{ product.category }}</span></td>
+                      <td>
+                        <strong class="text-success">${{ getDiscountedPrice(product).toFixed(2) }}</strong>
+                        <span *ngIf="product.discountPercentage > 0" class="text-muted small d-block">
+                          <del>${{ product.price.toFixed(2) }}</del> (-{{ product.discountPercentage }}%)
+                        </span>
+                      </td>
+                      <td>
+                        <span [class.text-danger]="product.stock < 10" [class.text-success]="product.stock >= 10">
+                          {{ product.stock }}
+                        </span>
+                      </td>
+                      <td>
+                        <i class="bi bi-star-fill text-warning"></i> {{ product.rating }}
+                      </td>
+                      <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                          <a [routerLink]="['/product', product.id]" class="btn btn-outline-primary" title="View">
+                            <i class="bi bi-eye"></i>
+                          </a>
+                          <a [routerLink]="['/edit-product', product.id]" class="btn btn-outline-warning" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button (click)="deleteProduct(product.id)" class="btn btn-outline-danger" title="Delete">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div *ngIf="activeTab === 'users'">
+          <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Users</h5>
+              <a routerLink="/admin/users/add" class="btn btn-light btn-sm">
+                <i class="bi bi-plus-circle"></i> Add New User
+              </a>
+            </div>
+            <div class="card-body">
+              <div *ngIf="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+
+              <div *ngIf="!loading && users.length === 0" class="alert alert-info">
+                No users found.
+              </div>
+
+              <div *ngIf="!loading && users.length > 0" class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Role</th>
+                      <th>Created At</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let user of users">
+                      <td>{{ user.id }}</td>
+                      <td>{{ user.firstName }} {{ user.lastName }}</td>
+                      <td>{{ user.email }}</td>
+                      <td>
+                        <span class="badge" [class.bg-danger]="user.role === 'admin'" [class.bg-secondary]="user.role === 'user'">
+                          {{ user.role | uppercase }}
+                        </span>
+                      </td>
+                      <td>{{ user.createdAt ? (user.createdAt | date:'short') : 'N/A' }}</td>
+                      <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                          <a [routerLink]="['/admin/users/edit', user.id]" class="btn btn-outline-warning" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <button 
+                            (click)="deleteUser(user.id)" 
+                            class="btn btn-outline-danger" 
+                            [disabled]="user.id === currentUser?.id"
+                            title="Delete">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

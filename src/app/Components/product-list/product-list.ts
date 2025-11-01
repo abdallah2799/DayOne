@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../services/product';
 import { Product } from '../../Models/product';
@@ -18,12 +18,17 @@ export class ProductListComponent implements OnInit {
   selectedCategory = 'all';
   totalPrice = 0;
 
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService) {
+    // Use effect to react to signal changes
+    effect(() => {
+      this.products = this.productService.products();
+      this.filter(this.selectedCategory);
+      this.categories = this.productService.getCategories();
+    });
+  }
 
   ngOnInit() {
-    this.products = this.productService.products();
-    this.categories = this.productService.getCategories();
-    this.filtered = this.products;
+    // Initial load handled by effect
   }
 
   filter(categoryId: string) {
@@ -37,10 +42,16 @@ export class ProductListComponent implements OnInit {
     this.totalPrice += product.price;
   }
 
+  handleDelete(id: number) {
+    this.productService.deleteProduct(id);
+    this.products = this.productService.products();
+    this.filter(this.selectedCategory);
+  }
+
   onCategoryChange(event: Event) {
-  const select = event.target as HTMLSelectElement;
-  this.filter(select.value);
-}
+    const select = event.target as HTMLSelectElement;
+    this.filter(select.value);
+  }
 }
 
 

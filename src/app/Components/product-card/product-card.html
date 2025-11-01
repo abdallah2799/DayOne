@@ -1,5 +1,5 @@
 <div class="card h-100" appHoverCard>
-  <img [src]="product.images[0]" class="card-img-top" alt="{{ product.title }}">
+  <img [src]="product.images[0]" class="card-img-top" alt="{{ product.title }}" (click)="viewDetails()" style="cursor: pointer;">
   <div class="card-body">
     <h5 class="card-title">{{ product.title }}</h5>
     <p class="card-text" (click)="toggleDescription()" style="cursor: pointer;">
@@ -8,6 +8,13 @@
     <p class="card-text fw-bold text-success">
       Price: {{ product.price }}$
     </p>
-    <button class="btn btn-primary" (click)="handleBuy()">Buy</button>
+    <div class="d-flex flex-column gap-2">
+      <button class="btn btn-primary btn-sm" (click)="handleBuy()">Buy</button>
+      <button class="btn btn-info btn-sm" (click)="viewDetails()">View Details</button>
+      <div class="d-flex gap-2" *ngIf="authService.isAdmin">
+        <button class="btn btn-warning btn-sm flex-fill" (click)="editProduct()">Edit</button>
+        <button class="btn btn-danger btn-sm flex-fill" (click)="deleteProduct()">Delete</button>
+      </div>
+    </div>
   </div>
 </div>

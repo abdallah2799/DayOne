@@ -1,0 +1,27 @@
+.product-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #dee2e6;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-header {
+  font-weight: 600;
+}
+
+.badge {
+  font-weight: 500;
+}
+
+h2 {
+  color: #333;
+  font-weight: 600;
+}

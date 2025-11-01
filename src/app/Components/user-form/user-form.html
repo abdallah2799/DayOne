@@ -1,0 +1,117 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-body p-4">
+          <h2 class="text-center mb-4">{{ isEditMode ? 'Edit User' : 'Add New User' }}</h2>
+          
+          <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+            {{ errorMessage }}
+          </div>
+
+          <div *ngIf="successMessage" class="alert alert-success" role="alert">
+            {{ successMessage }}
+          </div>
+
+          <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <!-- First Name -->
+              <div class="col-md-6 mb-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="firstName" 
+                  formControlName="firstName"
+                  [class.is-invalid]="submitted && f['firstName'].errors">
+                <div *ngIf="submitted && f['firstName'].errors" class="invalid-feedback">
+                  <div *ngIf="f['firstName'].errors['required']">First name is required</div>
+                  <div *ngIf="f['firstName'].errors['minlength']">First name must be at least 2 characters</div>
+                </div>
+              </div>
+
+              <!-- Last Name -->
+              <div class="col-md-6 mb-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="lastName" 
+                  formControlName="lastName"
+                  [class.is-invalid]="submitted && f['lastName'].errors">
+                <div *ngIf="submitted && f['lastName'].errors" class="invalid-feedback">
+                  <div *ngIf="f['lastName'].errors['required']">Last name is required</div>
+                  <div *ngIf="f['lastName'].errors['minlength']">Last name must be at least 2 characters</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                formControlName="email"
+                [class.is-invalid]="submitted && f['email'].errors">
+              <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+                <div *ngIf="f['email'].errors['required']">Email is required</div>
+                <div *ngIf="f['email'].errors['email']">Email must be a valid email address</div>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+              <label for="password" class="form-label">
+                Password 
+                <span *ngIf="isEditMode" class="text-muted">(Leave blank to keep current password)</span>
+              </label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="password" 
+                formControlName="password"
+                [class.is-invalid]="submitted && f['password'].errors"
+                [placeholder]="isEditMode ? 'Leave blank to keep current' : 'Enter password'">
+              <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+                <div *ngIf="f['password'].errors['required']">Password is required</div>
+                <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+              </div>
+            </div>
+
+            <!-- Role -->
+            <div class="mb-3">
+              <label for="role" class="form-label">Role</label>
+              <select 
+                class="form-select" 
+                id="role" 
+                formControlName="role">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex gap-2">
+              <button 
+                type="submit" 
+                class="btn btn-primary flex-fill" 
+                [disabled]="loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                {{ loading ? 'Saving...' : (isEditMode ? 'Update User' : 'Create User') }}
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-secondary" 
+                (click)="cancel()"
+                [disabled]="loading">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
